@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { signUpWithEmail } from "@/lib/actions";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -21,7 +22,7 @@ function SubmitButton() {
 }
 
 export default function SignupPage() {
-    const [state, formAction] = useFormState(signUpWithEmail, null);
+    const [state, formAction] = useActionState(signUpWithEmail, null);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4">
