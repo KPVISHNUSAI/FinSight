@@ -16,7 +16,10 @@ export function getFirebaseAuthErrorMessage(error: any): string {
             return "An account with this email already exists.";
         case "auth/weak-password":
             return "The password is too weak. It must be at least 6 characters long.";
+        case "auth/operation-not-allowed":
+            return "This sign-in method is not enabled. Please enable it in your Firebase project settings.";
         default:
-            return "An unexpected error occurred. Please try again.";
+            console.error("Firebase Auth Error:", error);
+            return `An unexpected error occurred (${error.code}). Please check your Firebase configuration and try again.`;
     }
 }

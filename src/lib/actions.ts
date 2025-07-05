@@ -3,7 +3,6 @@
 import { generateReportFromPrompt } from "@/ai/flows/generate-report-from-prompt";
 import { detectFinancialAnomalies } from "@/ai/flows/detect-financial-anomalies";
 import { forecastFinancials } from "@/ai/flows/forecast-financials";
-import { auth } from "@/lib/firebase";
 
 export async function handleGenerateReport(prompt: string, availableData: string) {
   try {
@@ -46,8 +45,4 @@ export async function handleForecastFinancials(historicalData: string) {
       console.error(e);
       return { forecast: null, error: e.message || "An unexpected error occurred." };
     }
-}
-
-export async function signOutAction() {
-    await auth.signOut();
 }

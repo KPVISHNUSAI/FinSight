@@ -15,7 +15,8 @@ import { useSidebar } from "@/components/ui/sidebar";
 import { useAuth } from "@/components/auth/auth-provider";
 import { cn } from "@/lib/utils";
 import { LogOut, Settings, User, Loader2 } from "lucide-react";
-import { signOutAction } from "@/lib/actions";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export function UserNav() {
   const { state } = useSidebar();
@@ -30,7 +31,7 @@ export function UserNav() {
   }
 
   const handleLogout = async () => {
-    await signOutAction();
+    await signOut(auth);
   };
   
   return (
