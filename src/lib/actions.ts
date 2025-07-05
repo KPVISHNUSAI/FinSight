@@ -50,7 +50,7 @@ export async function handleForecastFinancials(historicalData: string) {
 }
 
 
-export async function signInWithEmail(data: FormData) {
+export async function signInWithEmail(prevState: any, data: FormData) {
     const email = data.get("email") as string;
     const password = data.get("password") as string;
   
@@ -66,7 +66,7 @@ export async function signInWithEmail(data: FormData) {
     }
 }
   
-export async function signUpWithEmail(data: FormData) {
+export async function signUpWithEmail(prevState: any, data: FormData) {
     const email = data.get("email") as string;
     const password = data.get("password") as string;
   
