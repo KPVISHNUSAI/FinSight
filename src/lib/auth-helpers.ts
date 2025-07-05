@@ -18,10 +18,8 @@ export function getFirebaseAuthErrorMessage(error: any): string {
             return "The password is too weak. It must be at least 6 characters long.";
         case "auth/operation-not-allowed":
             return "This sign-in method is not enabled. Please enable it in your Firebase project settings.";
-        case "auth/configuration-not-found":
-            return "Firebase configuration is missing or incorrect. Please ensure all NEXT_PUBLIC_FIREBASE_ variables are set correctly in your .env file. IMPORTANT: You must restart the development server after changing the .env file.";
         default:
             console.error("Firebase Auth Error:", error);
-            return `An unexpected error occurred (${error.code}). Please check your Firebase configuration and try again.`;
+            return `An unexpected error occurred (${error.code}). Please check your configuration and try again.`;
     }
 }
