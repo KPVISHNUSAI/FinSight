@@ -18,7 +18,10 @@ export function KpiCard({ title, value, change, icon, isNegative = false }: KpiC
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
-        <p className={cn("text-xs text-muted-foreground", isNegative ? "text-red-500" : "text-emerald-500")}>
+        <p className={cn(
+          "text-xs text-muted-foreground",
+          isNegative ? "text-destructive" : "text-primary"
+        )}>
           {change}
         </p>
       </CardContent>
