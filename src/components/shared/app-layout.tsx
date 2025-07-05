@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, LayoutDashboard, ShieldAlert, Sun, Moon } from "lucide-react";
+import { FileText, LayoutDashboard, ShieldAlert, Sun, Moon, Bot } from "lucide-react";
 import {
   SidebarProvider,
   Sidebar,
@@ -14,31 +14,27 @@ import {
   SidebarFooter,
   SidebarTrigger,
   SidebarInset,
-  useSidebar,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/shared/logo";
 import { UserNav } from "@/components/shared/user-nav";
 import { cn } from "@/lib/utils";
-import { Separator } from "../ui/separator";
+import { useTheme } from "next-themes";
 
-// This is a simplified theme toggle for demonstration.
-// In a real app, you'd use a theme provider (e.g., next-themes).
-const useTheme = () => {
-  const toggleTheme = () => {
-    document.documentElement.classList.toggle("dark");
-  };
-  return { toggleTheme };
-};
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { toggleTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  }
 
   const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/reports", label: "Reports", icon: FileText },
     { href: "/anomalies", label: "Anomalies", icon: ShieldAlert },
+    { href: "/forecasting", label: "Forecasting", icon: Bot },
   ];
 
   return (
@@ -75,7 +71,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <header className="flex items-center justify-between p-4 border-b h-14">
           <div className="flex items-center gap-2">
             <SidebarTrigger className="md:hidden" />
-            {/* Page title could be dynamic here */}
           </div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle Theme">
