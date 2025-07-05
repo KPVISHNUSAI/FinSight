@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/shared/logo";
-import { UserNav } from "@/components/shared/user-nav";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 
@@ -64,7 +63,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
-          <UserNav />
         </SidebarFooter>
       </Sidebar>
       <SidebarInset>
