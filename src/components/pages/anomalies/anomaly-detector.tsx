@@ -11,7 +11,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import type { DetectFinancialAnomaliesOutput } from "@/ai/flows/detect-financial-anomalies";
-import { cn } from "@/lib/utils";
 
 const placeholderData = JSON.stringify(
     {
@@ -122,9 +121,7 @@ export function AnomalyDetector() {
           <CardHeader>
             <CardTitle className="font-headline">Analysis Result</CardTitle>
             <CardDescription>
-                {totalAnomalies > 0 
-                    ? `Found ${totalAnomalies} potential anomal${totalAnomalies === 1 ? 'y' : 'ies'} across several categories.`
-                    : "No anomalies detected. Everything looks normal."}
+                {result.summary}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -170,7 +167,7 @@ export function AnomalyDetector() {
                 <Alert>
                     <CheckCircle2 className="h-4 w-4" />
                     <AlertTitle>System Scan Complete</AlertTitle>
-                    <AlertDescription>No anomalies were found in the provided data. All systems appear to be operating within normal parameters.</AlertDescription>
+                    <AlertDescription>{result.summary}</AlertDescription>
                 </Alert>
             )}
           </CardContent>

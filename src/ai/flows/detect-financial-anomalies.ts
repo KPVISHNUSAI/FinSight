@@ -34,6 +34,7 @@ const AnomalyItemSchema = z.object({
 });
 
 const DetectFinancialAnomaliesOutputSchema = z.object({
+  summary: z.string().describe('A brief, one-paragraph natural language summary of the most critical findings. If no anomalies are found, state that the system appears to be operating normally.'),
   transactionalAnomalies: z
     .array(AnomalyItemSchema)
     .describe('Anomalies related to financial transactions.'),
@@ -61,7 +62,11 @@ const prompt = ai.definePrompt({
   name: 'detectFinancialAnomaliesPrompt',
   input: {schema: DetectFinancialAnomaliesInputSchema},
   output: {schema: DetectFinancialAnomaliesOutputSchema},
-  prompt: `You are an expert financial compliance and security officer. Your task is to analyze the provided data logs and identify a wide range of anomalies. For each anomaly found, provide a clear description, assign a severity level (Low, Medium, High, Critical), and suggest a concrete recommendation.
+  prompt: `You are an expert financial compliance and security officer. Your task is to analyze the provided data logs and identify a wide range of anomalies.
+
+First, provide a brief, one-paragraph natural language summary of your findings. This should highlight the most critical risks identified. If no anomalies are found, the summary should state that everything appears to be operating within normal parameters.
+
+Then, for each anomaly found, provide a clear description, assign a severity level (Low, Medium, High, Critical), and suggest a concrete recommendation in the appropriate category.
 
 Analyze the following categories:
 
