@@ -19,10 +19,10 @@ export function AnomalyCardSkeleton() {
             <Skeleton className="h-4 w-1/4" />
         </div>
       </CardContent>
-      <CardFooter className="gap-2">
-        <Skeleton className="h-8 w-full" />
-        <Skeleton className="h-8 w-full" />
-        <Skeleton className="h-8 w-full" />
+      <CardFooter className="grid grid-cols-3 gap-2">
+        <Skeleton className="h-9 w-full" />
+        <Skeleton className="h-9 w-full" />
+        <Skeleton className="h-9 w-full" />
       </CardFooter>
     </Card>
   );

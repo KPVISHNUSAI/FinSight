@@ -83,15 +83,15 @@ export function AnomalyCard({ anomaly }: AnomalyCardProps) {
       <CardFooter className="grid grid-cols-3 gap-2">
         <Button size="sm" variant="outline" className="bg-info/10 text-info hover:bg-info/20 hover:text-info border-info/20">
             <Search />
-            Investigate
+            <span className="hidden sm:inline">Investigate</span>
         </Button>
         <Button size="sm" variant="outline" className="bg-risk-low/10 text-risk-low hover:bg-risk-low/20 hover:text-risk-low border-risk-low/20">
             <Check />
-            Approve
+            <span className="hidden sm:inline">Approve</span>
         </Button>
         <Button size="sm" variant="outline" className="bg-risk-high/10 text-risk-high hover:bg-risk-high/20 hover:text-risk-high border-risk-high/20">
             <X />
-            Dismiss
+            <span className="hidden sm:inline">Dismiss</span>
         </Button>
       </CardFooter>
     </Card>
