@@ -50,7 +50,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             {navItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
-                  isActive={pathname === item.href}
+                  isActive={item.href === '/' ? pathname === item.href : pathname.startsWith(item.href)}
                   tooltip={item.label}
                   asChild
                 >
