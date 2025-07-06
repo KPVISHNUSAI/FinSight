@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useRef, type ChangeEvent, type DragEvent } from "react";
+import * as XLSX from 'xlsx';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,13 @@ type DataInputOptionsProps = {
   placeholderData: string;
 };
 
+const validFileTypes = [
+    'application/json',
+    'text/csv',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+];
+
 export function DataInputOptions({ onAnalyze, isPending, placeholderData }: DataInputOptionsProps) {
   const [jsonText, setJsonText] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -26,18 +34,22 @@ export function DataInputOptions({ onAnalyze, isPending, placeholderData }: Data
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
+  const validateFile = (file: File) => {
+    if (validFileTypes.includes(file.type)) {
+      setFile(file);
+      setFileName(file.name);
+      setFileError(null);
+    } else {
+      setFileError("Invalid file type. Please upload a JSON, CSV, or Excel file.");
+      setFile(null);
+      setFileName("");
+    }
+  }
+
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
-      if (selectedFile.type === "application/json") {
-        setFile(selectedFile);
-        setFileName(selectedFile.name);
-        setFileError(null);
-      } else {
-        setFileError("Invalid file type. Please upload a .json file.");
-        setFile(null);
-        setFileName("");
-      }
+      validateFile(selectedFile);
     }
   };
 
@@ -51,15 +63,7 @@ export function DataInputOptions({ onAnalyze, isPending, placeholderData }: Data
     handleDragEvents(e, false);
     const droppedFile = e.dataTransfer.files?.[0];
     if (droppedFile) {
-        if (droppedFile.type === "application/json") {
-            setFile(droppedFile);
-            setFileName(droppedFile.name);
-            setFileError(null);
-          } else {
-            setFileError("Invalid file type. Please upload a .json file.");
-            setFile(null);
-            setFileName("");
-          }
+        validateFile(droppedFile);
     }
   };
 
@@ -69,14 +73,39 @@ export function DataInputOptions({ onAnalyze, isPending, placeholderData }: Data
       return;
     }
     const reader = new FileReader();
+
     reader.onload = (e) => {
-      const content = e.target?.result as string;
-      onAnalyze(content);
+        try {
+            const content = e.target?.result;
+            if (!content) {
+                setFileError('File appears to be empty.');
+                return;
+            }
+
+            if (file.type === 'application/json') {
+                onAnalyze(content as string);
+            } else {
+                const workbook = XLSX.read(content, { type: file.type === 'text/csv' ? 'string' : 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const jsonResult = XLSX.utils.sheet_to_json(worksheet);
+                onAnalyze(JSON.stringify(jsonResult, null, 2));
+            }
+        } catch (err) {
+            console.error("Error parsing file:", err);
+            setFileError("Could not parse the file. Please check its format.");
+        }
     };
+
     reader.onerror = () => {
         setFileError("Error reading file.");
     }
-    reader.readAsText(file);
+
+    if (file.type === 'application/json' || file.type === 'text/csv') {
+        reader.readAsText(file);
+    } else { // It's an excel file
+        reader.readAsArrayBuffer(file);
+    }
   };
 
   const handleAnalyzeJson = () => {
@@ -124,13 +153,13 @@ export function DataInputOptions({ onAnalyze, isPending, placeholderData }: Data
               <Upload className="w-10 h-10 text-muted-foreground mb-4" />
               <p className="font-semibold">Drag & drop files here</p>
               <p className="text-sm text-muted-foreground mb-4">or click to browse</p>
-              <p className="text-xs text-muted-foreground">Supports .json (CSV & Excel coming soon)</p>
+              <p className="text-xs text-muted-foreground">Supports JSON, CSV, and Excel files</p>
               <Input 
                 type="file" 
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
                 ref={fileInputRef}
                 onChange={handleFileChange}
-                accept=".json"
+                accept=".json,.csv,.xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 disabled={isPending}
               />
             </div>
