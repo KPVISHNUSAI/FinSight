@@ -4,8 +4,8 @@ import { Toaster } from "@/components/ui/toaster"
 import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
-  title: 'FinSight',
-  description: 'Gaining insights into enterprise financial operations.',
+  title: 'Relanto',
+  description: 'AI-ingrained business consulting for strategic outcomes.',
 };
 
 export default function RootLayout({

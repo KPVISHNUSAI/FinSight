@@ -42,7 +42,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <SidebarHeader>
           <div className="flex items-center gap-2">
             <Logo />
-            <h1 className="text-xl font-semibold font-headline">FinSight</h1>
+            <h1 className="text-xl font-semibold font-headline">Relanto</h1>
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -50,7 +50,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             {navItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
-                  isActive={pathname === item.href}
+                  isActive={pathname.startsWith(item.href)}
                   tooltip={item.label}
                   asChild
                 >

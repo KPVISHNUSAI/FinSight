@@ -22,10 +22,10 @@ export default function LoginPage() {
         <CardHeader className="text-center">
             <div className="flex justify-center items-center gap-2 mb-4">
                 <Logo />
-                <h1 className="text-2xl font-semibold font-headline">FinSight</h1>
+                <h1 className="text-2xl font-semibold font-headline">Relanto</h1>
             </div>
           <CardTitle>Welcome Back</CardTitle>
-          <CardDescription>Enter your credentials to access your account.</CardDescription>
+          <CardDescription>Enter your credentials to access the platform.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
