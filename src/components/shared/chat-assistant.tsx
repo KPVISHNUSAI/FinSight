@@ -11,6 +11,8 @@ import { handleChat } from '@/lib/actions';
 import type { ConversationInput } from '@/ai/flows/conversational-assistant';
 import { useToast } from '@/hooks/use-toast';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 type Message = {
   role: 'user' | 'model';
@@ -119,7 +121,16 @@ export function ChatAssistant() {
                       : 'bg-muted'
                   )}
                 >
-                  <p className="text-sm break-words">{message.content}</p>
+                  {message.role === 'user' ? (
+                     <p className="text-sm break-words">{message.content}</p>
+                  ) : (
+                    <ReactMarkdown
+                      className="prose prose-sm dark:prose-invert max-w-none prose-p:my-0"
+                      remarkPlugins={[remarkGfm]}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  )}
                 </div>
                  {message.role === 'user' && (
                   <Avatar className="h-8 w-8">
