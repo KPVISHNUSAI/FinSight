@@ -37,6 +37,13 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217.2 32.6% 17.5%;
     --sidebar-ring: 231 48% 48%;
+
+    /* Custom colors for anomaly cards */
+    --risk-critical: 0 84.2% 60.2%;
+    --risk-high: 0 84.2% 60.2%;
+    --risk-medium: 39 100% 50%;
+    --risk-low: 122 39% 49%;
+    --info: 217 91% 60%;
   }
   .dark {
     --background: 222.2 84% 4.9%;
@@ -71,6 +78,13 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217.2 32.6% 17.5%;
     --sidebar-ring: 231 48% 58%;
+
+    /* Custom colors for anomaly cards */
+    --risk-critical: 0 72.2% 50.6%;
+    --risk-high: 0 72.2% 50.6%;
+    --risk-medium: 39 100% 50%;
+    --risk-low: 122 39% 49%;
+    --info: 217 91% 60%;
   }
 }
 
