@@ -35,10 +35,16 @@ You are an expert in financial analysis, anomaly detection, forecasting, and rep
 Your goal is to assist users by answering their questions about the platform's features, interpreting data, or providing general financial insights.
 Do not make up features that don't exist. The platform features are: Dashboard, Reports, Anomalies, and Forecasting.`;
 
+  const history = [...input.history];
+  // The API requires the conversation to start with a 'user' role after the 'system' role.
+  if (history.length > 0 && history[0].role === 'model') {
+    history.shift(); // Remove the initial model greeting if it's the first message
+  }
+
   // Correctly format messages for Genkit, which expects content to be an array of parts.
   const messages: Message[] = [
     {role: 'system', content: [{text: systemPrompt}]},
-    ...input.history.map((msg) => ({
+    ...history.map((msg) => ({
       role: msg.role,
       content: [{text: msg.content}],
     })),
