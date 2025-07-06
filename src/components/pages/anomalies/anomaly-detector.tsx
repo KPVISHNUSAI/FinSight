@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useTransition, useEffect } from "react";
@@ -107,7 +108,7 @@ export function AnomalyDetector() {
       toast({
           title: `Anomaly ${action}`,
           description: `The selected anomaly has been marked as ${action.toLowerCase()}.`,
-          variant: action === "Approved" ? "default" : "destructive",
+          variant: action === "Dismissed" ? "destructive" : "default",
       });
   };
 
