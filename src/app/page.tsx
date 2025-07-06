@@ -1,7 +1,10 @@
+'use client';
+
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/shared/logo";
 import Link from "next/link";
-import { ArrowRight, DollarSign, LineChart, Shield, Cpu, Rocket, Users } from "lucide-react";
+import { ArrowRight, DollarSign, LineChart, Shield, Cpu, Rocket, Users, Menu } from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function LandingPage() {
   return (
@@ -12,7 +15,7 @@ export default function LandingPage() {
           <Logo />
           <span className="ml-3 text-2xl font-bold font-headline">Relanto</span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6 items-center">
+        <nav className="ml-auto hidden md:flex gap-4 sm:gap-6 items-center">
           <Link href="#" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
             Solutions
           </Link>
@@ -28,6 +31,38 @@ export default function LandingPage() {
             </Link>
           </Button>
         </nav>
+        <div className="ml-auto md:hidden">
+            <Sheet>
+                <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                        <Menu className="h-6 w-6" />
+                        <span className="sr-only">Toggle navigation menu</span>
+                    </Button>
+                </SheetTrigger>
+                <SheetContent side="right">
+                    <nav className="grid gap-6 text-lg font-medium mt-8">
+                        <Link href="/" className="flex items-center gap-2 text-lg font-semibold mb-4">
+                            <Logo />
+                            <span className="sr-only">Relanto</span>
+                        </Link>
+                        <Link href="#" className="hover:text-primary transition-colors" prefetch={false}>
+                            Solutions
+                        </Link>
+                        <Link href="#" className="text-muted-foreground hover:text-primary transition-colors" prefetch={false}>
+                            Industries
+                        </Link>
+                        <Link href="#" className="text-muted-foreground hover:text-primary transition-colors" prefetch={false}>
+                            About Us
+                        </Link>
+                         <Button asChild className="mt-4">
+                            <Link href="/login">
+                                Login <ArrowRight className="ml-2 h-4 w-4" />
+                            </Link>
+                        </Button>
+                    </nav>
+                </SheetContent>
+            </Sheet>
+        </div>
       </header>
 
       <main className="flex-1">
