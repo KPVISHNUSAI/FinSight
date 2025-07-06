@@ -30,10 +30,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   }
 
   const navItems = [
-    { href: "/", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/reports", label: "Reports", icon: FileText },
-    { href: "/anomalies", label: "Anomalies", icon: ShieldAlert },
-    { href: "/forecasting", label: "Forecasting", icon: Bot },
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard/reports", label: "Reports", icon: FileText },
+    { href: "/dashboard/anomalies", label: "Anomalies", icon: ShieldAlert },
+    { href: "/dashboard/forecasting", label: "Forecasting", icon: Bot },
   ];
 
   return (
@@ -50,7 +50,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             {navItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
-                  isActive={item.href === '/' ? pathname === item.href : pathname.startsWith(item.href)}
+                  isActive={pathname === item.href}
                   tooltip={item.label}
                   asChild
                 >
