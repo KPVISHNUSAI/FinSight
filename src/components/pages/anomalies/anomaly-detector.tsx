@@ -2,14 +2,13 @@
 
 import { useState, useTransition, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import { handleDetectAnomalies } from "@/lib/actions";
 import { AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { DetectFinancialAnomaliesOutput } from "@/ai/flows/detect-financial-anomalies";
 import { AnomalyCard } from "./anomaly-card";
 import { AnomalyCardSkeleton } from "./anomaly-card-skeleton";
+import { DataInputOptions } from "./data-input-options";
 
 const placeholderData = JSON.stringify(
     {
@@ -52,15 +51,13 @@ export function AnomalyDetector() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<DetectFinancialAnomaliesOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState("");
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleAnalyze = (dataToAnalyze: string) => {
     setError(null);
     setResult(null);
 
     startTransition(async () => {
-      const { anomalies, error } = await handleDetectAnomalies(data);
+      const { anomalies, error } = await handleDetectAnomalies(dataToAnalyze);
       if (error) {
         setError(error);
       } else {
@@ -85,37 +82,11 @@ export function AnomalyDetector() {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <form onSubmit={handleSubmit}>
-          <CardHeader>
-            <CardTitle className="font-headline">Financial Data Input</CardTitle>
-            <CardDescription>
-              Paste your financial and operational data in JSON format below to scan for a wide range of anomalies.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Textarea
-              placeholder={placeholderData}
-              className="min-h-[200px] resize-y font-code text-xs"
-              value={data}
-              onChange={(e) => setData(e.target.value)}
-              disabled={isPending}
-            />
-          </CardContent>
-          <CardFooter>
-            <Button type="submit" disabled={isPending || !data}>
-              {isPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Analyzing...
-                </>
-              ) : (
-                "Detect Anomalies"
-              )}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
+      <DataInputOptions 
+        onAnalyze={handleAnalyze}
+        isPending={isPending}
+        placeholderData={placeholderData}
+      />
 
       {error && (
         <Alert variant="destructive">
@@ -136,16 +107,29 @@ export function AnomalyDetector() {
             <Card>
                 <CardHeader>
                     <CardTitle className="font-headline">Analysis Summary</CardTitle>
-                    <CardDescription>{result.summary}</CardDescription>
                 </CardHeader>
+                <CardContent>
+                    <p className="text-muted-foreground">{result.summary}</p>
+                    {allAnomalies.length > 0 && (
+                        <div className="text-sm mt-4 p-4 bg-muted/50 rounded-lg">
+                           <h4 className="font-semibold mb-2">Anomaly Statistics:</h4>
+                           <ul className="list-disc list-inside space-y-1">
+                                <li><span className="font-medium">{result.transactionalAnomalies.length}</span> Transactional</li>
+                                <li><span className="font-medium">{result.accessAnomalies.length}</span> Access & Permission</li>
+                                <li><span className="font-medium">{result.securityAnomalies.length}</span> Security & Compliance</li>
+                                <li><span className="font-medium">{result.reportingAnomalies.length}</span> Reporting Irregularities</li>
+                           </ul>
+                        </div>
+                    )}
+                 </CardContent>
                  {allAnomalies.length === 0 && (
-                    <CardContent>
-                        <Alert>
+                    <CardFooter>
+                        <Alert className="w-full">
                             <CheckCircle2 className="h-4 w-4" />
                             <AlertTitle>System Scan Complete</AlertTitle>
-                            <AlertDescription>{result.summary}</AlertDescription>
+                            <AlertDescription>No anomalies were detected in the provided data.</AlertDescription>
                         </Alert>
-                    </CardContent>
+                    </CardFooter>
                  )}
             </Card>
 
