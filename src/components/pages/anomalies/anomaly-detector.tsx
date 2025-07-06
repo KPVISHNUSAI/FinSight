@@ -5,23 +5,49 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { handleDetectAnomalies } from "@/lib/actions";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import type { DetectFinancialAnomaliesOutput } from "@/ai/flows/detect-financial-anomalies";
+import { cn } from "@/lib/utils";
 
 const placeholderData = JSON.stringify(
-    [
-      { "transaction_id": "txn_123", "date": "2023-10-01", "amount": 1200.00, "description": "Vendor Payment - Acme Corp" },
-      { "transaction_id": "txn_124", "date": "2023-10-02", "amount": 75.50, "description": "Office Supplies" },
-      { "transaction_id": "txn_125", "date": "2023-10-02", "amount": 15000.00, "description": "Unusual Large Transfer" },
-      { "transaction_id": "txn_126", "date": "2023-10-03", "amount": 250.00, "description": "Client Dinner" }
-    ],
+    {
+      "transactions": [
+        { "transaction_id": "txn_123", "date": "2023-10-01T10:00:00Z", "amount": 1200.00, "description": "Vendor Payment - Acme Corp" },
+        { "transaction_id": "txn_124", "date": "2023-10-02T11:30:00Z", "amount": 75.50, "description": "Office Supplies" },
+        { "transaction_id": "txn_125", "date": "2023-10-02T23:50:00Z", "amount": 15000.00, "description": "Urgent After-Hours Server Repair" },
+        { "transaction_id": "txn_126", "date": "2023-10-03T09:00:00Z", "amount": 250.00, "description": "Client Dinner" },
+        { "transaction_id": "txn_127", "date": "2023-10-03T09:01:00Z", "amount": 250.00, "description": "Client Dinner" }
+      ],
+      "access_logs": [
+        { "user": "admin@finsight.com", "action": "role_change", "target_user": "analyst@finsight.com", "details": "Promoted to 'Admin'", "timestamp": "2023-10-03T18:05:00Z" },
+        { "user": "guest@external.com", "action": "bulk_download", "details": "Downloaded 5,000 transaction records", "timestamp": "2023-10-03T19:20:00Z" }
+      ],
+      "security_events": [
+        { "type": "failed_login", "user": "hacker@evil.com", "count": 150, "timestamp_start": "2023-10-04T01:00:00Z", "timestamp_end": "2023-10-04T01:05:00Z" }
+      ],
+      "reporting_activity": [
+        { "user": "ceo@finsight.com", "action": "edit_report", "report_id": "Q3-Board-Meeting", "details": "Updated revenue figures", "timestamp": "2023-10-04T08:55:00Z", "deadline": "2023-10-04T09:00:00Z" }
+      ]
+    },
     null,
     2
 );
 
+const severityVariantMap: { [key: string]: "default" | "secondary" | "destructive" | "outline" } = {
+    "Low": "secondary",
+    "Medium": "default",
+    "High": "outline",
+    "Critical": "destructive",
+};
+
+
 export function AnomalyDetector() {
   const [isPending, startTransition] = useTransition();
-  const [result, setResult] = useState<string | null>(null);
+  const [result, setResult] = useState<DetectFinancialAnomaliesOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState("");
 
@@ -39,6 +65,15 @@ export function AnomalyDetector() {
       }
     });
   };
+  
+  const anomalySections = result ? [
+    { title: "Transactional Anomalies", data: result.transactionalAnomalies },
+    { title: "Access & Permission Anomalies", data: result.accessAnomalies },
+    { title: "Security & Compliance Anomalies", data: result.securityAnomalies },
+    { title: "Reporting Irregularities", data: result.reportingAnomalies },
+  ] : [];
+
+  const totalAnomalies = anomalySections.reduce((acc, section) => acc + section.data.length, 0);
 
   return (
     <div className="space-y-6">
@@ -47,7 +82,7 @@ export function AnomalyDetector() {
           <CardHeader>
             <CardTitle className="font-headline">Financial Data Input</CardTitle>
             <CardDescription>
-              Paste your financial data in JSON format below to scan for anomalies.
+              Paste your financial and operational data in JSON format below to scan for a wide range of anomalies.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -86,15 +121,58 @@ export function AnomalyDetector() {
         <Card>
           <CardHeader>
             <CardTitle className="font-headline">Analysis Result</CardTitle>
+            <CardDescription>
+                {totalAnomalies > 0 
+                    ? `Found ${totalAnomalies} potential anomal${totalAnomalies === 1 ? 'y' : 'ies'} across several categories.`
+                    : "No anomalies detected. Everything looks normal."}
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <Alert variant={result.toLowerCase().includes("no anomalies") ? "default" : "destructive"}>
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>
-                {result.toLowerCase().includes("no anomalies") ? "No Anomalies Found" : "Anomalies Detected!"}
-              </AlertTitle>
-              <AlertDescription className="whitespace-pre-wrap">{result}</AlertDescription>
-            </Alert>
+            {totalAnomalies > 0 ? (
+                <Accordion type="multiple" defaultValue={anomalySections.filter(s => s.data.length > 0).map(s => s.title)} className="w-full">
+                {anomalySections.map((section) => (
+                    section.data.length > 0 && (
+                    <AccordionItem value={section.title} key={section.title}>
+                        <AccordionTrigger className="text-lg">
+                            <div className="flex items-center gap-3">
+                                <AlertCircle className="h-5 w-5 text-destructive" />
+                                {section.title}
+                                <Badge variant="destructive">{section.data.length}</Badge>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                        <Table>
+                            <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[100px]">Severity</TableHead>
+                                <TableHead>Description</TableHead>
+                                <TableHead>Recommendation</TableHead>
+                            </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                            {section.data.map((item, index) => (
+                                <TableRow key={index}>
+                                <TableCell>
+                                    <Badge variant={severityVariantMap[item.severity]}>{item.severity}</Badge>
+                                </TableCell>
+                                <TableCell>{item.description}</TableCell>
+                                <TableCell>{item.recommendation}</TableCell>
+                                </TableRow>
+                            ))}
+                            </TableBody>
+                        </Table>
+                        </AccordionContent>
+                    </AccordionItem>
+                    )
+                ))}
+                </Accordion>
+            ) : (
+                <Alert>
+                    <CheckCircle2 className="h-4 w-4" />
+                    <AlertTitle>System Scan Complete</AlertTitle>
+                    <AlertDescription>No anomalies were found in the provided data. All systems appear to be operating within normal parameters.</AlertDescription>
+                </Alert>
+            )}
           </CardContent>
         </Card>
       )}
