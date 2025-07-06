@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { handleDetectAnomalies } from "@/lib/actions";
 import { AlertCircle, Loader2, CheckCircle2 } from "lucide-react";
@@ -9,6 +9,7 @@ import type { DetectFinancialAnomaliesOutput } from "@/ai/flows/detect-financial
 import { AnomalyCard } from "./anomaly-card";
 import { AnomalyCardSkeleton } from "./anomaly-card-skeleton";
 import { DataInputOptions } from "./data-input-options";
+import { useToast } from "@/hooks/use-toast";
 
 const placeholderData = JSON.stringify(
     {
@@ -34,11 +35,28 @@ const placeholderData = JSON.stringify(
     2
 );
 
+type AnomalyStatus = 'New' | 'Investigating' | 'Approved' | 'Dismissed';
+type Anomaly = {
+    id: string;
+    description: string;
+    severity: "Low" | "Medium" | "High" | "Critical";
+    recommendation: string;
+    score: number;
+    amount: number;
+    department: string;
+    confidence: number;
+    timestamp: Date;
+    category: string;
+    status: AnomalyStatus;
+};
+
 // Helper function to create mock data to match the detailed card UI
-const addMockData = (anomaly: any) => {
+const addMockData = (anomaly: any, index: number): Anomaly => {
     const severities = { Low: 2, Medium: 5, High: 8, Critical: 9.5 };
     return {
         ...anomaly,
+        id: `anomaly-${index}-${Date.now()}`,
+        status: 'New',
         score: severities[anomaly.severity] + Math.random() * 0.5,
         amount: Math.random() * 20000,
         department: ["Marketing", "Sales", "IT", "Operations", "HR"][Math.floor(Math.random() * 5)],
@@ -51,10 +69,13 @@ export function AnomalyDetector() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<DetectFinancialAnomaliesOutput | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [anomalies, setAnomalies] = useState<Anomaly[]>([]);
+  const { toast } = useToast();
 
   const handleAnalyze = (dataToAnalyze: string) => {
     setError(null);
     setResult(null);
+    setAnomalies([]);
 
     startTransition(async () => {
       const { anomalies, error } = await handleDetectAnomalies(dataToAnalyze);
@@ -66,19 +87,29 @@ export function AnomalyDetector() {
     });
   };
   
-  const allAnomalies = useMemo(() => {
-    if (!result) return [];
+  useEffect(() => {
+    if (!result) return;
     
     const sections = [
-        ...result.transactionalAnomalies.map(a => ({ ...addMockData(a), category: "Transactional" })),
-        ...result.accessAnomalies.map(a => ({ ...addMockData(a), category: "Access & Permission" })),
-        ...result.securityAnomalies.map(a => ({ ...addMockData(a), category: "Security & Compliance" })),
-        ...result.reportingAnomalies.map(a => ({ ...addMockData(a), category: "Reporting Irregularities" })),
+        ...result.transactionalAnomalies.map(a => ({ ...a, category: "Transactional" })),
+        ...result.accessAnomalies.map(a => ({ ...a, category: "Access & Permission" })),
+        ...result.securityAnomalies.map(a => ({ ...a, category: "Security & Compliance" })),
+        ...result.reportingAnomalies.map(a => ({ ...a, category: "Reporting Irregularities" })),
     ];
     
-    return sections;
+    setAnomalies(sections.map(addMockData));
   }, [result]);
 
+  const handleAction = (id: string, action: AnomalyStatus) => {
+      setAnomalies(currentAnomalies =>
+        currentAnomalies.map(a => (a.id === id ? { ...a, status: action } : a))
+      );
+      toast({
+          title: `Anomaly ${action}`,
+          description: `The selected anomaly has been marked as ${action.toLowerCase()}.`,
+          variant: action === "Approved" ? "default" : "destructive",
+      });
+  };
 
   return (
     <div className="space-y-6">
@@ -110,7 +141,7 @@ export function AnomalyDetector() {
                 </CardHeader>
                 <CardContent>
                     <p className="text-muted-foreground">{result.summary}</p>
-                    {allAnomalies.length > 0 && (
+                    {anomalies.length > 0 && (
                         <div className="text-sm mt-4 p-4 bg-muted/50 rounded-lg">
                            <h4 className="font-semibold mb-2">Anomaly Statistics:</h4>
                            <ul className="list-disc list-inside space-y-1">
@@ -122,7 +153,7 @@ export function AnomalyDetector() {
                         </div>
                     )}
                  </CardContent>
-                 {allAnomalies.length === 0 && (
+                 {anomalies.length === 0 && (
                     <CardFooter>
                         <Alert className="w-full">
                             <CheckCircle2 className="h-4 w-4" />
@@ -133,10 +164,14 @@ export function AnomalyDetector() {
                  )}
             </Card>
 
-            {allAnomalies.length > 0 && (
+            {anomalies.length > 0 && (
                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start">
-                    {allAnomalies.map((anomaly, index) => (
-                        <AnomalyCard key={index} anomaly={anomaly} />
+                    {anomalies.map((anomaly) => (
+                        <AnomalyCard 
+                          key={anomaly.id} 
+                          anomaly={anomaly} 
+                          onAction={handleAction as any} 
+                        />
                     ))}
                 </div>
             )}
