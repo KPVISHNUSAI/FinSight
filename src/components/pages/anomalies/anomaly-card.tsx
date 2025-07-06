@@ -66,12 +66,12 @@ export function AnomalyCard({ anomaly }: AnomalyCardProps) {
       </CardHeader>
       <CardContent className="flex-grow space-y-3">
         <div>
-            <div className="text-2xl font-bold">
+            <div className="text-xl font-bold md:text-2xl">
                 {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(anomaly.amount)}
             </div>
             <div className="text-sm text-muted-foreground">{anomaly.department}</div>
         </div>
-        <p className="text-sm line-clamp-2">{anomaly.description}</p>
+        <p className="text-sm">{anomaly.description}</p>
         <div className="space-y-1">
             <div className="flex justify-between items-center text-xs text-muted-foreground">
                 <span>Confidence: {anomaly.confidence}%</span>

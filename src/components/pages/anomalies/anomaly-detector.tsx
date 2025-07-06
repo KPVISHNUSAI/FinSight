@@ -126,7 +126,7 @@ export function AnomalyDetector() {
       )}
 
       {isPending && (
-         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start">
             {Array.from({ length: 8 }).map((_, i) => <AnomalyCardSkeleton key={i} />)}
          </div>
       )}
@@ -150,7 +150,7 @@ export function AnomalyDetector() {
             </Card>
 
             {allAnomalies.length > 0 && (
-                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-start">
                     {allAnomalies.map((anomaly, index) => (
                         <AnomalyCard key={index} anomaly={anomaly} />
                     ))}
