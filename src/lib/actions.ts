@@ -12,6 +12,10 @@ import {
   forecastFinancials,
   type ForecastFinancialsOutput,
 } from '@/ai/flows/forecast-financials';
+import {
+  askAssistant,
+  type ConversationInput,
+} from '@/ai/flows/conversational-assistant';
 
 function getAiErrorMessage(e: any): string {
   console.error(e);
@@ -71,5 +75,16 @@ export async function handleForecastFinancials(
     return {forecast: result.forecast, error: null};
   } catch (e: any) {
     return {forecast: null, error: getAiErrorMessage(e)};
+  }
+}
+
+export async function handleChat(
+  input: ConversationInput
+): Promise<{response: string | null; error: string | null}> {
+  try {
+    const result = await askAssistant(input);
+    return {response: result, error: null};
+  } catch (e: any) {
+    return {response: null, error: getAiErrorMessage(e)};
   }
 }

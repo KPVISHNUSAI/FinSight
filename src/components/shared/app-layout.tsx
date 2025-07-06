@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
+import { ChatAssistant } from "@/components/shared/chat-assistant";
 
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -50,7 +51,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             {navItems.map((item) => (
               <SidebarMenuItem key={item.href}>
                 <SidebarMenuButton
-                  isActive={pathname.startsWith(item.href)}
+                  isActive={pathname.startsWith(item.href) && (item.href === "/dashboard" ? pathname === item.href : true)}
                   tooltip={item.label}
                   asChild
                 >
@@ -79,6 +80,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
         </header>
         <main>{children}</main>
+        <ChatAssistant />
       </SidebarInset>
     </SidebarProvider>
   );
