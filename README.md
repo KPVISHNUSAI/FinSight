@@ -20,6 +20,32 @@ FinSight is a modern, AI-powered financial analysis platform designed to provide
 -   **Charts:** [Recharts](https://recharts.org/)
 -   **Language:** [TypeScript](https://www.typescriptlang.org/)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Getting Started
 
 Follow these instructions to set up and run the project on your local machine.
