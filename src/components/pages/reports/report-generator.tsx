@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { handleGenerateReport } from "@/lib/actions";
 import { Loader2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const availableData = `
 - transactions: { id: string, date: string, amount: number, description: string, category: 'revenue' | 'expense', department: string }
-- budgets: { id: string, department: string, month: string, allocated: number, spent: number }
+- budgets: { id:string, department: string, month: string, allocated: number, spent: number }
 - employees: { id: string, name: string, department: string, role: string }
 `;
 
@@ -83,7 +85,7 @@ export function ReportGenerator() {
           </CardHeader>
           <CardContent>
             <div className="prose dark:prose-invert max-w-none">
-              <pre className="whitespace-pre-wrap bg-muted p-4 rounded-md">{result}</pre>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{result}</ReactMarkdown>
             </div>
           </CardContent>
         </Card>
