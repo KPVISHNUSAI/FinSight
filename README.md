@@ -62,7 +62,6 @@ Once the dependencies are installed and the environment is configured, you can s
 ```bash
 npm run dev
 ```
-
 Open [http://localhost:9002](http://localhost:9002) with your browser to see the result.
 
 ## Project Structure
